@@ -1,0 +1,15 @@
+{
+  "name": "world-a",
+  "version": "1.0.0",
+  "description": "My world A",
+  "main": "game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "World",
+    "A"
+  ],
+  "author": "Romain BAROU",
+  "license": "MIT"
+}

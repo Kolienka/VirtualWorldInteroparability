@@ -1,0 +1,15 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "World A client",
+  "main": "game.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Romain BAROU",
+  "license": "MIT",
+  "dependencies": {
+    "socket.io-client": "^4.5.3"
+  }
+}
