@@ -8,6 +8,7 @@ function drawGame(mapData, players){
 }
 
 function drawPlayers(players,cellSize){
+    console.log(players);
     players.forEach(player => {
         const x = player[0]*cellSize + cellSize/2;
         const y = player[1]*cellSize + cellSize/2;

@@ -1,6 +1,6 @@
 import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
 
-const socket = io("ws://localhost:3000");
+const socket = io("ws://localhost:3001");
 
 let players = [];
 
@@ -35,15 +35,11 @@ function handleArrowPress(dx,dy){
 socket.on('players', function(playersList){
     players = playersList;
     drawGame(map,players)
+    console.log(players);
 });
 
 socket.on('move',function(coordinates){
     drawGame(map,coordinates);
-});
-
-socket.on('teleport', function(destination){
-    console.log("MUST TELEPORT at " + destination)
-    window.location.href = destination;
 });
 
 initGame();

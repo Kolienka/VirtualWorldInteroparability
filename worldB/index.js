@@ -21,11 +21,6 @@ io.on('connection', function(socket){
   socket.on('move', (dx,dy) => { 
     players[socket.id][0] += dx;
     players[socket.id][1] += dy;
-    if(players[socket.id][0] == 5 && players[socket.id][1] == 5){
-      console.log("must teleport server side")
-      const destination = 'http://localhost:3001';
-      socket.emit('teleport',destination);
-    }
     console.log(players[socket.id]);
   });
   
@@ -41,6 +36,6 @@ function update(){
 
 setInterval(update,1000/60);
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
+server.listen(3001, () => {
+  console.log('listening on *:3001');
 });       
