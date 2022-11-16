@@ -4,9 +4,12 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const serverIo = new Server(server);
 
-io.on('connection', function(socket){
+const { io } = require("socket.io-client");
+io("ws://localhost:3003");
+
+serverIo.on('connection', function(socket){
     console.log('a new world is connected: world socket ID: ' + socket.id);
 });
 
