@@ -23,22 +23,16 @@ function initGame(){
     new KeyPressListener('ArrowUp', () => handleArrowPress(0,-1));
     new KeyPressListener('ArrowRight', () => handleArrowPress(1,0));
     new KeyPressListener('ArrowDown', () => handleArrowPress(0,1));
+    new KeyPressListener('Space', () => socket.emit('changeColor'))
 }
 
 function handleArrowPress(dx,dy){
     socket.emit('move',dx,dy,map.cellSize);
-    //playerPosition[0] += dx*map.cellSize;
-    //playerPosition[1] += dy*map.cellSize;
-    //drawGame(map,playerPosition);
 }
 
 socket.on('players', function(playersList){
     players = playersList;
     drawGame(map,players)
-});
-
-socket.on('move',function(coordinates){
-    drawGame(map,coordinates);
 });
 
 socket.on('teleport', function(destination){

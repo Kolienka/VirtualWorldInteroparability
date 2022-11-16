@@ -5,7 +5,10 @@ app.use(express.static(path.join(__dirname,'client/')));
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const serverIo = new Server(server);
+
+const { io } = require("socket.io-client");
+io("ws://localhost:3002");
 
 const players = {}
 
@@ -13,7 +16,7 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/client/client.html');
 });
 
-io.on('connection', function(socket){
+serverIo.on('connection', function(socket){
   console.log('a new player is connected');
 
   players[socket.id] = [0,0];
@@ -31,7 +34,7 @@ io.on('connection', function(socket){
 });
 
 function update(){
-  io.volatile.emit('players', Object.values(players));
+  serverIo.volatile.emit('players', Object.values(players));
 }
 
 setInterval(update,1000/60);
