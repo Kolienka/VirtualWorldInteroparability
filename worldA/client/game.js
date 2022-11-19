@@ -35,9 +35,8 @@ socket.on('players', function(playersList){
     drawGame(map,players)
 });
 
-socket.on('teleport', function(destination){
-    console.log("MUST TELEPORT at " + destination)
-    window.location.href = destination;
+socket.on('teleport', function(port){
+    window.location.href = 'http://localhost:' + port;
 });
 
 initGame();

@@ -6,11 +6,17 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const serverIo = new Server(server);
+const fs = require('fs');
+
+const config = JSON.parse(fs.readFileSync('../config.json'));
+
+const PORT = config.worldB.port;
 
 const { io } = require("socket.io-client");
-io("ws://localhost:3002");
+const supervisorSocket = io("ws://localhost:" + config.supervisor.port);
 
 const players = {}
+let color = "red";
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/client/client.html');
@@ -19,12 +25,15 @@ app.get('/', (req, res) => {
 serverIo.on('connection', function(socket){
   console.log('a new player is connected');
 
-  players[socket.id] = [0,0];
+  players[socket.id] = {
+    x:0,
+    y:0,
+    color: color
+  };
 
   socket.on('move', (dx,dy) => { 
-    players[socket.id][0] += dx;
-    players[socket.id][1] += dy;
-    console.log(players[socket.id]);
+    players[socket.id].x += dx;
+    players[socket.id].y += dy;
   });
   
   socket.on('disconnect',function(){
@@ -33,12 +42,21 @@ serverIo.on('connection', function(socket){
   })
 });
 
+supervisorSocket.on('transferPlayer', function(player){
+  console.log(player);
+  color = player.color;
+})
+
+supervisorSocket.on('identifyWorld', () => {
+  supervisorSocket.emit('identifyWorld', config.worldB.id);
+});
+
 function update(){
   serverIo.volatile.emit('players', Object.values(players));
 }
 
 setInterval(update,1000/60);
 
-server.listen(3001, () => {
-  console.log('listening on *:3001');
+server.listen(PORT, () => {
+  console.log('listening on *:' + PORT);
 });       

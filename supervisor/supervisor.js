@@ -4,15 +4,42 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const serverIo = new Server(server);
+const io = new Server(server);
+const fs = require('fs');
 
-const { io } = require("socket.io-client");
-io("ws://localhost:3003");
+const config = JSON.parse(fs.readFileSync('../config.json'));
 
-serverIo.on('connection', function(socket){
+const PORT = config.supervisor.port;
+
+let worlds = [];
+
+io.on('connection', function(socket){
     console.log('a new world is connected: world socket ID: ' + socket.id);
+
+    socket.emit('identifyWorld');
+
+    socket.on('dataPlayer', (destination,player) => {
+        console.log('data player: ' + player.color);
+        console.log('destination socket: ' + worlds[destination]);
+        io.to(worlds[destination]).emit('transferPlayer',player);
+    })
+
+    socket.on('identifyWorld', (id) => {
+        worlds[id] = socket.id;
+        console.log(worlds);
+    })
+
+    socket.on('teleport', function(destination){
+        console.log('destination port : ' + config[destination].port);
+        socket.emit('sendAdress', config[destination].port)
+    });
+
+    socket.on('disconnect', () => {
+        console.log('world with id: ' + socket.id + ' is disconnected');
+    })
+
 });
 
-server.listen('3002', () => {
-    console.log('supervisor is listening on *:3002');
+server.listen(PORT, () => {
+    console.log('supervisor is listening on *:' + PORT);
 })

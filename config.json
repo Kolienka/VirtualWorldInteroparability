@@ -1,0 +1,14 @@
+{
+    "supervisor":{
+        "id" : "supervisor",
+        "port":3002
+    },
+    "worldA":{
+        "id": "worldA",
+        "port": 3000
+    },
+    "worldB":{
+        "id": "worldB",
+        "port":3001
+    }
+}

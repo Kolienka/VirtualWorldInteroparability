@@ -9,7 +9,9 @@
   "author": "Romain BAROU",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.18.2",
     "socket-io": "^1.0.0",
+    "socket.io": "^4.5.3",
     "socket.io-client": "^4.5.3"
   }
 }

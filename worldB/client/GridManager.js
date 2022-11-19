@@ -10,13 +10,13 @@ function drawGame(mapData, players){
 function drawPlayers(players,cellSize){
     console.log(players);
     players.forEach(player => {
-        const x = player[0]*cellSize + cellSize/2;
-        const y = player[1]*cellSize + cellSize/2;
+        const x = player.x*cellSize + cellSize/2;
+        const y = player.y*cellSize + cellSize/2;
         const radius = cellSize/2;
         context.beginPath();
         context.arc(x,y,radius, cellSize/2, 0, 2*Math.PI);
         context.stroke();
-        context.fillStyle = "red";
+        context.fillStyle = player.color;
         context.fill();
     });
 }

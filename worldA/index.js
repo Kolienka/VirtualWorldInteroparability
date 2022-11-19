@@ -6,9 +6,16 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const serverIo = new Server(server);
+const fs = require('fs');
+
+const config = JSON.parse(fs.readFileSync('../config.json'));
+
+const PORT = config.worldA.port;
+const PORTB = config.worldB.port;
+const PORTSUPERVISOR = config.supervisor.port;
 
 const { io } = require("socket.io-client");
-io("ws://localhost:3002");
+const supervisorSocket = io("ws://localhost:" + PORTSUPERVISOR);
 
 const players = {}
 const colors = ['red', 'green', 'blue'];
@@ -30,13 +37,17 @@ serverIo.on('connection', function(socket){
     players[socket.id].x += dx;
     players[socket.id].y += dy;
     if(players[socket.id].x == 5 && players[socket.id].y == 5){
-      console.log("must teleport server side")
-      const destination = 'http://localhost:3001';
-      socket.emit('teleport',destination);
+      const destination = 'worldB';
+      supervisorSocket.emit('dataPlayer', destination, players[socket.id]);
+      supervisorSocket.emit('teleport',destination);
     }
     console.log(players[socket.id]);
   });
-  
+
+  supervisorSocket.on('sendAdress', function(port){
+    socket.emit('teleport', port);
+  });
+
   socket.on('disconnect',function(){
     console.log('a user is disconnected');
     delete players[socket.id];
@@ -47,6 +58,10 @@ serverIo.on('connection', function(socket){
     changeColor(players[socket.id]);
   })
 
+});
+
+supervisorSocket.on('identifyWorld', () => {
+  supervisorSocket.emit('identifyWorld', config.worldA.id);
 });
 
 function changeColor(player){
@@ -63,6 +78,6 @@ function update(){
 
 setInterval(update,1000/60);
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
+server.listen(PORT, () => {
+  console.log('listening on *:' + PORT);
 });       
