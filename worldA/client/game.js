@@ -4,6 +4,10 @@ const socket = io("ws://localhost:3000");
 
 let players = [];
 
+const credentialsSender = document.getElementById('credentialsSender')
+
+console.log(credentialsSender);
+
 const map = { //define a maxX*maxY grid map
 
     cellSize : 70,
@@ -40,3 +44,12 @@ socket.on('teleport', function(port){
 });
 
 initGame();
+
+credentialsSender.onclick = function(){
+    const credentials = document.getElementById('credentials').value;
+    const connected = document.getElementById('connected').innerHTML = 'connected as : ' + credentials;
+    console.log(connected)
+    console.log(credentials);
+    socket.emit('credentialsConnect', credentials);
+    console.log('get sender onclick');
+};

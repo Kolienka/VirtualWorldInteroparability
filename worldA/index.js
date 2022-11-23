@@ -9,6 +9,7 @@ const serverIo = new Server(server);
 const fs = require('fs');
 
 const config = JSON.parse(fs.readFileSync('../config.json'));
+const credentials = JSON.parse(fs.readFileSync('../credentials.json'));
 
 const PORT = config.worldA.port;
 const PORTB = config.worldB.port;

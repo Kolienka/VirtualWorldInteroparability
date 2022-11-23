@@ -12,7 +12,13 @@
         </style>
     </head>
     <body>
+        <h1 id="connected" ></h1>
         <canvas id="grid" width="420px" height="420px"></canvas>
+        <div>
+            <label for="name">Enter your credentials: </label>
+            <input type="text" name="credentials" id="credentials" required>
+            <button id="credentialsSender"> send credentials</button>
+        </div>
         <script src="/GridManager.js"></script>
         <script src="/KeyPressListener.js"></script>
         <script type="module" src="/game.js">
