@@ -27,7 +27,7 @@ function initGame(){
     new KeyPressListener('ArrowUp', () => handleArrowPress(0,-1));
     new KeyPressListener('ArrowRight', () => handleArrowPress(1,0));
     new KeyPressListener('ArrowDown', () => handleArrowPress(0,1));
-    new KeyPressListener('Space', () => socket.emit('changeColor'))
+    new KeyPressListener('ControlLeft', () => socket.emit('changeColor'))
 }
 
 function handleArrowPress(dx,dy){
@@ -47,9 +47,7 @@ initGame();
 
 credentialsSender.onclick = function(){
     const credentials = document.getElementById('credentials').value;
-    const connected = document.getElementById('connected').innerHTML = 'connected as : ' + credentials;
-    console.log(connected)
-    console.log(credentials);
+    document.getElementById('connected').innerHTML = 'connected as : ' + credentials;
     socket.emit('credentialsConnect', credentials);
     console.log('get sender onclick');
 };

@@ -27,9 +27,6 @@ function initGame(){
 
 function handleArrowPress(dx,dy){
     socket.emit('move',dx,dy,map.cellSize);
-    //playerPosition[0] += dx*map.cellSize;
-    //playerPosition[1] += dy*map.cellSize;
-    //drawGame(map,playerPosition);
 }
 
 socket.on('players', function(playersList){

@@ -19,7 +19,6 @@ io.on('connection', function(socket){
     socket.emit('identifyWorld');
 
     socket.on('dataPlayer', (destination,player) => {
-        console.log('data player: ' + player.color);
         console.log('destination socket: ' + worlds[destination]);
         io.to(worlds[destination]).emit('transferPlayer',player);
     })

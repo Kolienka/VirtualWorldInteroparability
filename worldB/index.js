@@ -9,6 +9,7 @@ const serverIo = new Server(server);
 const fs = require('fs');
 
 const config = JSON.parse(fs.readFileSync('../config.json'));
+let credentials = JSON.parse(fs.readFileSync('../credentials.json'));
 
 const PORT = config.worldB.port;
 
@@ -16,7 +17,11 @@ const { io } = require("socket.io-client");
 const supervisorSocket = io("ws://localhost:" + config.supervisor.port);
 
 const players = {}
-let color = "red";
+let nextPlayer = {
+  x:0,
+  y:0,
+  color: 'red'
+};
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/client/client.html');
@@ -25,11 +30,7 @@ app.get('/', (req, res) => {
 serverIo.on('connection', function(socket){
   console.log('a new player is connected');
 
-  players[socket.id] = {
-    x:0,
-    y:0,
-    color: color
-  };
+  players[socket.id] = nextPlayer;
 
   socket.on('move', (dx,dy) => { 
     players[socket.id].x += dx;
@@ -43,8 +44,12 @@ serverIo.on('connection', function(socket){
 });
 
 supervisorSocket.on('transferPlayer', function(player){
+  credentials = JSON.parse(fs.readFileSync('../credentials.json'));
   console.log(player);
-  color = player.color;
+  nextPlayer = credentials[player];
+  nextPlayer.x = 0;
+  nextPlayer.y = 0;
+  console.log(nextPlayer);
 })
 
 supervisorSocket.on('identifyWorld', () => {

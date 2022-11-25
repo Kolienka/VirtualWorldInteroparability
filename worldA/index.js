@@ -9,10 +9,9 @@ const serverIo = new Server(server);
 const fs = require('fs');
 
 const config = JSON.parse(fs.readFileSync('../config.json'));
-const credentials = JSON.parse(fs.readFileSync('../credentials.json'));
+let credentials = JSON.parse(fs.readFileSync('../credentials.json'));
 
 const PORT = config.worldA.port;
-const PORTB = config.worldB.port;
 const PORTSUPERVISOR = config.supervisor.port;
 
 const { io } = require("socket.io-client");
@@ -26,9 +25,13 @@ app.get('/', (req, res) => {
 });
 
 serverIo.on('connection', function(socket){
+
+  credentials = JSON.parse(fs.readFileSync('../credentials.json'));
+
   console.log('a new player is connected');
 
   players[socket.id] = {
+    pseudo: 'guest',
     x: 0,
     y: 0,
     color: colors[0]
@@ -39,7 +42,7 @@ serverIo.on('connection', function(socket){
     players[socket.id].y += dy;
     if(players[socket.id].x == 5 && players[socket.id].y == 5){
       const destination = 'worldB';
-      supervisorSocket.emit('dataPlayer', destination, players[socket.id]);
+      supervisorSocket.emit('dataPlayer', destination, players[socket.id].pseudo);
       supervisorSocket.emit('teleport',destination);
     }
     console.log(players[socket.id]);
@@ -51,14 +54,24 @@ serverIo.on('connection', function(socket){
 
   socket.on('disconnect',function(){
     console.log('a user is disconnected');
+    saveCredentials(socket,players[socket.id].pseudo);
     delete players[socket.id];
-  })
+  });
 
   socket.on('changeColor', () => {
-    console.log("test color")
+    console.log(players[socket.id]);
     changeColor(players[socket.id]);
-  })
+  });
 
+  socket.on('credentialsConnect', function(data){
+    console.log('credential connect wtf');
+    if(data in credentials){
+      players[socket.id].color = credentials[data].color;
+      players[socket.id].pseudo = credentials[data].pseudo; 
+    }else{
+      saveCredentials(socket,data);
+    }
+  });
 });
 
 supervisorSocket.on('identifyWorld', () => {
@@ -75,6 +88,13 @@ function changeColor(player){
 
 function update(){
   serverIo.volatile.emit('players', Object.values(players));
+}
+
+function saveCredentials(socket,pseudo){
+  credentials[pseudo] = {};
+  credentials[pseudo].color = players[socket.id].color;
+  credentials[pseudo].pseudo = pseudo;
+  fs.writeFileSync('../credentials.json',JSON.stringify(credentials));
 }
 
 setInterval(update,1000/60);
