@@ -10,5 +10,9 @@
     "worldB":{
         "id": "worldB",
         "port":3001
+    },
+    "worldC":{
+        "id": "worldC",
+        "port":3003
     }
 }

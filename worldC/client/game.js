@@ -1,17 +1,17 @@
 import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
 
-const socket = io("ws://localhost:3001");
+const socket = io("ws://localhost:3003");
 
 let players = [];
 
 const map = { //define a maxX*maxY grid map
 
-    cellSize : 42,
+    cellSize : 70,
 
     minX : 0,
-    maxX : 10,
+    maxX : 6,
     minY : 0,
-    maxY : 10
+    maxY : 6
 }
 
 function initGame(){
@@ -29,10 +29,13 @@ function handleArrowPress(dx,dy){
     socket.emit('move',dx,dy,map.cellSize);
 }
 
+socket.on('teleport', function(port){
+    window.location.href = 'http://localhost:' + port;
+});
+
 socket.on('players', function(playersList){
     players = playersList;
     drawGame(map,players)
-    console.log(players);
 });
 
 socket.on('move',function(coordinates){

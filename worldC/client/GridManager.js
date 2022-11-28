@@ -15,7 +15,7 @@ function drawPlayers(players,cellSize){
         context.beginPath();
         context.arc(x,y,radius, cellSize/2, 0, 2*Math.PI);
         context.stroke();
-        context.fillStyle = player.color;
+        context.fillStyle = 'red';
         context.fill();
     });
 }
@@ -26,21 +26,15 @@ function drawGrid(maxX, maxY, cellSize){
         context.moveTo(x*cellSize,0);
         context.lineTo(x*cellSize,maxY*cellSize);
     }           
+
     for (let y = 0; y <= maxY; y ++) {
         context.moveTo(0,y*cellSize);
         context.lineTo(maxX*cellSize,y*cellSize);
     }
-
     context.strokeStyle = "black";
     context.stroke();
     context.fill();
-
     context.fillStyle = "orange";
     context.fillRect((maxX-1)*cellSize,(maxY-1)*cellSize,cellSize,cellSize);
-
-    context.fillStyle = "purple";
-    context.fillRect(0,(maxY-1)*cellSize,cellSize,cellSize);
-
-    context.fillStyle = "yellow";
-    context.fillRect((maxX-1)*cellSize, 0,cellSize,cellSize);
 }
+

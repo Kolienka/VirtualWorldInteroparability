@@ -29,7 +29,6 @@ io.on('connection', function(socket){
     })
 
     socket.on('teleport', function(destination){
-        console.log('destination port : ' + config[destination].port);
         socket.emit('sendAdress', config[destination].port)
     });
 

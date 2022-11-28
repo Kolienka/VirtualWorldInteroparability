@@ -20,6 +20,13 @@ const supervisorSocket = io("ws://localhost:" + PORTSUPERVISOR);
 const players = {}
 const colors = ['red', 'green', 'blue'];
 
+let nextPlayer = {
+  pseudo: 'guest',
+    x: 0,
+    y: 0,
+    color: colors[0]
+}
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/client/client.html');
 });
@@ -30,18 +37,20 @@ serverIo.on('connection', function(socket){
 
   console.log('a new player is connected');
 
-  players[socket.id] = {
-    pseudo: 'guest',
-    x: 0,
-    y: 0,
-    color: colors[0]
-  };
+  players[socket.id] = nextPlayer;
 
   socket.on('move', (dx,dy) => { 
-    players[socket.id].x += dx;
-    players[socket.id].y += dy;
+    if (players[socket.id].x + dx >= 0 && players[socket.id].x + dx < 6 && players[socket.id].y + dy >= 0 && players[socket.id].y + dy < 6){
+      players[socket.id].x += dx;
+      players[socket.id].y += dy;
+    }
     if(players[socket.id].x == 5 && players[socket.id].y == 5){
       const destination = 'worldB';
+      supervisorSocket.emit('dataPlayer', destination, players[socket.id].pseudo);
+      supervisorSocket.emit('teleport',destination);
+    }
+    if(players[socket.id].x == 5 && players[socket.id].y == 0){
+      const destination = 'worldC';
       supervisorSocket.emit('dataPlayer', destination, players[socket.id].pseudo);
       supervisorSocket.emit('teleport',destination);
     }
@@ -49,6 +58,7 @@ serverIo.on('connection', function(socket){
   });
 
   supervisorSocket.on('sendAdress', function(port){
+    console.log('port');
     socket.emit('teleport', port);
   });
 
@@ -72,11 +82,21 @@ serverIo.on('connection', function(socket){
       saveCredentials(socket,data);
     }
   });
+
 });
 
 supervisorSocket.on('identifyWorld', () => {
   supervisorSocket.emit('identifyWorld', config.worldA.id);
 });
+
+supervisorSocket.on('transferPlayer', function(player){
+  credentials = JSON.parse(fs.readFileSync('../credentials.json'));
+  console.log(player);
+  nextPlayer = credentials[player];
+  nextPlayer.x = 0;
+  nextPlayer.y = 0;
+  console.log(nextPlayer);
+})
 
 function changeColor(player){
   if(player.x == 0 && player.y == 5){
