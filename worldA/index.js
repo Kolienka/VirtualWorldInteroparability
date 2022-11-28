@@ -41,6 +41,7 @@ serverIo.on('connection', function(socket){
     players[socket.id].x += dx;
     players[socket.id].y += dy;
     if(players[socket.id].x == 5 && players[socket.id].y == 5){
+      saveCredentials(socket,players[socket.id].pseudo);
       const destination = 'worldB';
       supervisorSocket.emit('dataPlayer', destination, players[socket.id].pseudo);
       supervisorSocket.emit('teleport',destination);

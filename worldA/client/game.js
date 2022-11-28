@@ -27,7 +27,7 @@ function initGame(){
     new KeyPressListener('ArrowUp', () => handleArrowPress(0,-1));
     new KeyPressListener('ArrowRight', () => handleArrowPress(1,0));
     new KeyPressListener('ArrowDown', () => handleArrowPress(0,1));
-    new KeyPressListener('ControlLeft', () => socket.emit('changeColor'))
+    new KeyPressListener('ControlRight', () => socket.emit('changeColor'))
 }
 
 function handleArrowPress(dx,dy){
